@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
 import { View, Text, Button, TextInput, Alert } from 'react-native';
 import tw from 'twrnc';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-import { db } from '../firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from '../firebaseConfig';
+import { doc, setDoc } from 'firebase/firestore';
 
 export default function HomeScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const getAuth =  db
 
-  const handleSignUp = () => {
-    createUserWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        Alert.alert('User signed up successfully!', `Welcome ${userCredential.user.email}`);
-      })
-      .catch((error) => {
-        Alert.alert('Error', error.message);
+  const handleSignUp = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Add user to Firestore
+      await setDoc(doc(db, 'users', user.uid), {
+        email: user.email,
+        firsttimeuser: true,
       });
+
+      Alert.alert('Success', `Welcome ${user.email}! Your account has been created.`);
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+    }
   };
 
   return (
@@ -27,6 +34,8 @@ export default function HomeScreen() {
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
       <TextInput
         style={tw`border border-gray-400 p-2 w-64 mb-4`}
