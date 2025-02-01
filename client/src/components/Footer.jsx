@@ -35,7 +35,7 @@ const Footer = () => {
                 <a href="https://www.linkedin.com/in/aliyas-gawhary-aaa419253/" target="_blank" rel="noopener noreferrer" className="relative group">
                     <i className="bx bxl-linkedin text-2xl hover:text-blue-700 transition-colors"></i>
                     <span className="tooltip absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 text-sm px-2 py-1 rounded bg-gray-800 text-white opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity duration-200">
-                        Victoria 
+                        Victoria Doan
                     </span>
                 </a>
                 <a href="https://www.linkedin.com/in/aliyas-gawhary-aaa419253/" target="_blank" rel="noopener noreferrer" className="relative group">
