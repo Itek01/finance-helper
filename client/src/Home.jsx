@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Navbar from "./Navbar"; // Import the Navbar component
 
 export default function Home() {
-  const [tip, setTip] = useState('Loading...');
-  const [stockPrice, setStockPrice] = useState('Loading stock price...');
+  const [tip, setTip] = useState("Loading...");
+  const [stockPrice, setStockPrice] = useState("Loading stock price...");
 
   useEffect(() => {
     fetchFinancialTip();
@@ -12,7 +13,7 @@ export default function Home() {
 
   const fetchFinancialTip = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/tips');
+      const response = await axios.get("http://localhost:5000/api/tips");
       setTip(response.data.tip);
     } catch (error) {
       console.error("Error fetching financial tip:", error);
@@ -21,7 +22,7 @@ export default function Home() {
 
   const fetchStockData = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/stocks');
+      const response = await axios.get("http://localhost:5000/api/stocks");
       setStockPrice(`AAPL: $${response.data.price}`);
     } catch (error) {
       console.error("Error fetching stock data:", error);
@@ -29,17 +30,40 @@ export default function Home() {
   };
 
   return (
-    <div className="p-8 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-blue-600 mb-4">Finance Companion</h1>
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Navbar */}
+      <Navbar />
 
-      <div className="bg-white p-6 shadow rounded-lg">
-        <p className="text-lg text-gray-700">
-          <strong>Tip of the Day:</strong> {tip}
+      {/* Hero Section */}
+      <header className="flex flex-col items-center justify-center text-center py-16 px-4 bg-gradient-to-r from-blue-600 to-blue-400 text-white">
+        <h2 className="text-4xl md:text-5xl font-bold mb-4">
+          Simplify Your Financial Wellness
+        </h2>
+        <p className="text-lg md:text-xl mb-8">
+          Manage your expenses, track your savings, and achieve your financial
+          goals with ease.
         </p>
-        <p className="mt-4 text-lg text-gray-700">
-          <strong>Current Stock Price! :</strong> {stockPrice}
-        </p>
-      </div>
+        <button className="px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg shadow hover:bg-gray-200">
+          Get Started
+        </button>
+      </header>
+
+      {/* Financial Info Section */}
+      <main className="container mx-auto mt-8 px-4">
+        <div className="bg-white p-6 shadow rounded-lg">
+          <p className="text-lg text-gray-700">
+            <strong>Tip of the Day:</strong> {tip}
+          </p>
+          <p className="mt-4 text-lg text-gray-700">
+            <strong>Current Stock Price:</strong> {stockPrice}
+          </p>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white mt-12 p-6 text-center">
+        <p>&copy; 2025 FinLite. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
