@@ -7,9 +7,9 @@ const Footer = () => {
       <div className="container mx-auto px-6">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
           <div className="text-center sm:text-left mb-4 sm:mb-0">
-            <h2 className="text-3xl font-semibold">Let Him Cook</h2>
+            <h2 className="text-3xl font-semibold">FinLife</h2>
             <p className="text-lg mt-2">
-              Bringing you the best recipes, using what you already have in your fridge!
+              Your powerful financial assistant
             </p>
           </div>
           <div className="flex justify-center sm:justify-end gap-6">
@@ -29,13 +29,19 @@ const Footer = () => {
                 <a href="https://www.linkedin.com/in/rneidco/" target="_blank" rel="noopener noreferrer" className="relative group">
                     <i className="bx bxl-linkedin text-2xl hover:text-blue-700 transition-colors"></i>
                     <span className="tooltip absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 text-sm px-2 py-1 rounded bg-gray-800 text-white opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity duration-200">
-                        Nicolas Fauteux
+                        Daniel To
                     </span>
                 </a>
                 <a href="https://www.linkedin.com/in/aliyas-gawhary-aaa419253/" target="_blank" rel="noopener noreferrer" className="relative group">
                     <i className="bx bxl-linkedin text-2xl hover:text-blue-700 transition-colors"></i>
                     <span className="tooltip absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 text-sm px-2 py-1 rounded bg-gray-800 text-white opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity duration-200">
-                        Aliyas Gawhary
+                        Victoria 
+                    </span>
+                </a>
+                <a href="https://www.linkedin.com/in/aliyas-gawhary-aaa419253/" target="_blank" rel="noopener noreferrer" className="relative group">
+                    <i className="bx bxl-linkedin text-2xl hover:text-blue-700 transition-colors"></i>
+                    <span className="tooltip absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 text-sm px-2 py-1 rounded bg-gray-800 text-white opacity-0 group-hover:opacity-100 whitespace-nowrap transition-opacity duration-200">
+                        Adel Bouchatta
                     </span>
                 </a>
 
@@ -49,7 +55,7 @@ const Footer = () => {
         <div className="border-t border-gray-700 pt-8">
           <div className="flex flex-col sm:flex-row justify-between items-center text-sm">
             <div className="text-center sm:text-left mb-4 sm:mb-0">
-              <p>&copy; 2025 Let Him Cook. All rights reserved.</p>
+              <p>&copy; 2025 FinLife. All rights reserved.</p>
             </div>
             <div className="text-center sm:text-right">
               <Link className="hover:underline mx-2">
