@@ -37,3 +37,5 @@ firebase-debug.*
 # OS-specific caches and swap files
 *.swp
 *.swo
+
+.env
