@@ -61,7 +61,7 @@ npx expo start
 - Push Notifications: Notify users of financial updates and tips.
 
 ## Contributors
-Adel Bouchatta
-Ly Andy Phok 
-Victoria Doan
-Daniel To
+- Adel Bouchatta
+- Ly Andy Phok 
+- Victoria Doan
+- Daniel To
