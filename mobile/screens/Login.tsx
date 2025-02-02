@@ -4,7 +4,7 @@ import tw from 'twrnc';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 import Button from '../components/Button';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore'; // Correctly import updateDoc
 import { db } from '../firebaseConfig';
 
 export function Login({ onBack, onQuestionnaire, onDashboard }: { onBack: () => void; onQuestionnaire: () => void; onDashboard: () => void }) {
@@ -16,26 +16,33 @@ export function Login({ onBack, onQuestionnaire, onDashboard }: { onBack: () => 
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
-
+  
     try {
+      // Sign in with Firebase Authentication
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
-      // Check if it's the first time logging in
+  
+      // Fetch the user's Firestore document
       const userDocRef = doc(db, 'users', user.uid);
       const userDoc = await getDoc(userDocRef);
-
+  
       if (userDoc.exists()) {
         const userData = userDoc.data();
+        
+        // Check if the user is logging in for the first time
         if (userData.firsttimeuser) {
-          onQuestionnaire();
+          await updateDoc(userDocRef, { lastLogin: new Date().toISOString() }); // Track last login
+          onQuestionnaire(); // Redirect to the questionnaire
         } else {
-          onDashboard();
+          await updateDoc(userDocRef, { lastLogin: new Date().toISOString() }); // Track last login
+          onDashboard(); // Redirect to the dashboard
         }
       } else {
-        Alert.alert('Error', 'User data not found.');
+        Alert.alert('Error', 'User data not found in Firestore.');
       }
     } catch (error: any) {
+      // Handle errors properly
+      console.error('Login Error:', error.message);
       Alert.alert('Error', error.message);
     }
   };
