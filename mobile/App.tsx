@@ -22,15 +22,7 @@ export default function App() {
 
   return (
     <View style={tw`flex-1 justify-center items-center bg-gray-100`}>
-      {/* {currentScreen === 'Splash' && <SplashScreen onFinish={() => setCurrentScreen('Home')} />}
       {currentScreen === 'Home' && <Home />} */}
-      <PieChartComponent data={chartData} title="Portfolio Breakdown" />
-      {/* <InterestGraphComponent
-        principal={1000}
-        rate={0.05}  // 5% annual interest
-        years={10}
-        title="Compound Interest Growth"
-      /> */}
     </View>
   );
 }
