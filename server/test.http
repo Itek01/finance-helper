@@ -1,0 +1,7 @@
+curl -X POST https://07f7-198-16-238-243.ngrok-free.app/api/generate/ \
+-H "Content-Type: application/json" \
+-d '{
+    "model": "ALIENTELLIGENCE/virtualfinancialadvisors:latest",
+    "prompt": "Generate personalized financial advice...",
+    "stream": false
+}'

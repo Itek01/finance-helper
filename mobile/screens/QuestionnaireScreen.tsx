@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { RadioButton } from 'react-native-paper';
+import * as FileSystem from 'expo-file-system';
 import tw from 'twrnc';
-import waves from '../assets/waves.jpg';
 import waves2 from '../assets/waves2.jpg';
 
 import { ReactNode } from 'react';
@@ -37,22 +37,10 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
         { label: 'General saving', value: 'general_saving' },
       ],
     },
-    {
-      question: 'How old are you?',
-      input: 'age',
-    },
-    {
-      question: 'What is your monthly passive income?',
-      input: 'passiveIncome',
-    },
-    {
-      question: 'What are your monthly spendings?',
-      input: 'monthlySpendings',
-    },
-    {
-      question: 'How much do you have in savings?',
-      input: 'savings',
-    },
+    { question: 'How old are you?', input: 'age' },
+    { question: 'What is your monthly passive income?', input: 'passiveIncome' },
+    { question: 'What are your monthly spendings?', input: 'monthlySpendings' },
+    { question: 'How much do you have in savings?', input: 'savings' },
     {
       question: 'In how long would you like to withdraw your money?',
       options: [
@@ -63,19 +51,14 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
       ],
       stateKey: 'withdrawalTime',
     },
-    {
-      question: 'How flexible are you?',
-      input: 'flexibility',
-    },
+    { question: 'How flexible are you?', input: 'flexibility' },
   ];
 
   const nextSlide = () => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      // Handle form submission
-      console.log(answers);
-      navigation.goBack();
+      handleSubmit();
     }
   };
 
@@ -93,21 +76,49 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
     setAnswers({ ...answers, [key]: value });
   };
 
-  const renderDots = () => {
-    return (
-      <View style={tw`flex-row justify-center mt-4`}>
-        {slides.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              tw`w-2 h-2 rounded-full mx-1`,
-              { backgroundColor: currentSlide === index ? 'black' : 'gray' },
-            ]}
-          />
-        ))}
-      </View>
-    );
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ answers }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Financial Advice:', data.advice);
+
+        // Save the JSON response locally
+        const filePath = `${FileSystem.documentDirectory}data.json`;
+        await FileSystem.writeAsStringAsync(filePath, JSON.stringify(data.advice));
+
+        // Navigate to the test component
+        navigation.navigate('TestComponent');
+      } else {
+        console.error('Error:', data.error);
+        Alert.alert('Error', 'Failed to get financial advice.');
+      }
+    } catch (error) {
+      console.error('Network Error:', error);
+      Alert.alert('Network Error', 'Could not connect to the server.');
+    }
   };
+
+  const renderDots = () => (
+    <View style={tw`flex-row justify-center mt-4`}>
+      {slides.map((_, index) => (
+        <View
+          key={index}
+          style={[
+            tw`w-2 h-2 rounded-full mx-1`,
+            { backgroundColor: currentSlide === index ? 'black' : 'gray' },
+          ]}
+        />
+      ))}
+    </View>
+  );
 
   const slideData = slides[currentSlide];
 
@@ -118,15 +129,16 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
           Let's get to know you...
         </Text>
         <Text style={tw`text-lg mb-5`}>{slideData.question}</Text>
-        {slideData.options && slideData.options.map((option, index) => (
-          <RadioButton.Item
-            key={index}
-            label={option.label}
-            value={option.value}
-            status={answers[slideData.stateKey || 'investmentGoal'] === option.value ? 'checked' : 'unchecked'}
-            onPress={() => setAnswers({ ...answers, [slideData.stateKey || 'investmentGoal']: option.value })}
-          />
-        ))}
+        {slideData.options &&
+          slideData.options.map((option, index) => (
+            <RadioButton.Item
+              key={index}
+              label={option.label}
+              value={option.value}
+              status={answers[slideData.stateKey || 'investmentGoal'] === option.value ? 'checked' : 'unchecked'}
+              onPress={() => setAnswers({ ...answers, [slideData.stateKey || 'investmentGoal']: option.value })}
+            />
+          ))}
         {slideData.input && (
           <TextInput
             style={tw`h-10 border border-gray-400 mt-5 px-3 w-full`}
@@ -135,19 +147,19 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
             keyboardType="numeric"
           />
         )}
-        
+
         <View style={tw`flex-row justify-between w-full mt-5`}>
-            <TouchableOpacity onPress={handlePrevious} style={tw`mt-5 p-3 bg-cyan-900 rounded w-3/10`}>
+          <TouchableOpacity onPress={handlePrevious} style={tw`mt-5 p-3 bg-cyan-900 rounded w-3/10`}>
             <Text style={tw`text-white font-bold`}>Previous</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-          style={tw`p-3 bg-cyan-900 rounded w-3/10 self-end`}
-          onPress={nextSlide}
-        >
-          <Text style={tw`text-white font-bold`}>
-            {currentSlide < slides.length - 1 ? 'Next' : 'Submit'}
-          </Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={tw`p-3 bg-cyan-900 rounded w-3/10 self-end`}
+            onPress={nextSlide}
+          >
+            <Text style={tw`text-white font-bold`}>
+              {currentSlide < slides.length - 1 ? 'Next' : 'Submit'}
+            </Text>
+          </TouchableOpacity>
         </View>
         {renderDots()}
       </Container>
