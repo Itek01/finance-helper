@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import tw from 'twrnc';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
-import Button from '../components/Button';
+import { auth } from '../firebaseConfig'; // Ensure this path is correct
 
-export default function Login({ onBack, onSuccess }: { onBack: () => void; onSuccess: () => void }) {
+interface LoginProps {
+  onBack: () => void;
+  onSuccess: () => void;
+}
+
+const Login = ({ onBack, onSuccess }: LoginProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false); // Add a loading state
@@ -16,12 +20,28 @@ export default function Login({ onBack, onSuccess }: { onBack: () => void; onSuc
       return;
     }
 
+    setLoading(true); // Start loading
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      Alert.alert('Success', 'Logged in successfully!');
-      onSuccess(); // Redirect to the Home screen
+      // Sign in with Firebase
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      console.log('User logged in:', user.email); // Log the user's email
+      onSuccess(); // Navigate to the Home screen on success
     } catch (error: any) {
-      Alert.alert('Error', error.message);
+      console.error('Login error:', error.message);
+
+      // Handle specific Firebase errors
+      if (error.code === 'auth/invalid-email') {
+        Alert.alert('Error', 'Invalid email address.');
+      } else if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        Alert.alert('Error', 'Invalid email or password.');
+      } else {
+        Alert.alert('Error', 'An error occurred. Please try again.');
+      }
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -58,4 +78,6 @@ export default function Login({ onBack, onSuccess }: { onBack: () => void; onSuc
       </TouchableOpacity>
     </View>
   );
-}
+};
+
+export default Login;

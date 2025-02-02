@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
 import tw from 'twrnc';
 import Login from './Login';
 import Signup from './Signup';
+import { useState } from 'react';
 
 const Home = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -58,17 +59,16 @@ const Home = () => {
           <TouchableOpacity
             onPress={handleSignupClick}
           >
-            <Text style={tw`text-gray-600`}>Don't have an account? <Text style={tw`text-blue-600`}>Signup</Text></Text>
+            <Text style={tw`text-gray-600`}>Don't have an account? <Text style={tw`text-blue-600`}>Sign up</Text></Text>
           </TouchableOpacity>
         </>
       )}
 
       {/* Show Login component if showLogin is true */}
-      {showLogin && <Login onBack={handleBackToCover} onQuestionnaire={() => {}} onDashboard={() => {}} />}
+      {showLogin && <Login onBack={handleBackToCover} onSuccess={handleLoginSuccess} />}
 
       {/* Show Signup component if showSignup is true */}
       {showSignup && <Signup onBack={handleBackToCover} onSuccess={() => setShowSignup(false)} />}
->>>>>>> master
     </View>
   );
 };

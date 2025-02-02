@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import tw from 'twrnc';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, updateDoc } from 'firebase/firestore';
@@ -58,7 +58,7 @@ export default function Signup({ onBack, onSuccess }: { onBack: () => void; onSu
       />
       <TouchableOpacity
         style={tw`w-full bg-blue-600 py-3 rounded-lg mb-4`}
-        onPress={handleSignup}
+        onPress={handleSignUp}
       >
         <Text style={tw`text-white text-center font-bold`}>Signup</Text>
       </TouchableOpacity>
@@ -69,4 +69,3 @@ export default function Signup({ onBack, onSuccess }: { onBack: () => void; onSu
   );
 };
 
-export default Signup;
