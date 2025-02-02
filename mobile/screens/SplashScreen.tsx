@@ -1,29 +1,17 @@
-// SplashScreen.tsx
-import React, { useEffect, useState } from 'react';
-import CoverPage from './CoverPage.tsx';
+import React, { useEffect } from 'react';
+import { View, Text } from 'react-native';
+import tw from 'twrnc';
 
-const SplashScreen = () => {
-  const [showCoverPage, setShowCoverPage] = useState(false);
-
+export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowCoverPage(true); // Navigate to CoverPage after 2 seconds
-    }, 2000);
-    return () => clearTimeout(timer);
+    setTimeout(() => {
+      onFinish();
+    }, 3000);
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-sharkBlue">
-      {!showCoverPage ? (
-        <>
-          <img src="/splash-icon.png" alt="FinLite Logo" className="w-24 h-24 mb-6" />
-          <h1 className="text-3xl font-bold text-white">FinLite</h1>
-        </>
-      ) : (
-        <CoverPage />
-      )}
-    </div>
+    <View style={tw`flex-1 justify-center items-center bg-blue-500`}>
+      <Text style={tw`text-white text-2xl font-bold`}>WealthApp</Text>
+    </View>
   );
-};
-
-export default SplashScreen;
+}
