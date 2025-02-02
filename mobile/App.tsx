@@ -1,14 +1,26 @@
-import React, {useState} from 'react';
-import { View, Text } from 'react-native';
-import tw from 'twrnc';  // Import twrnc
-import AppNavigator from './navigation/AppNavigator';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import QuestionnaireSlideshow from '../mobile/screens/QuestionnaireScreen';
+import FinancialAdviceScreen from '../mobile/screens/FinancialAdviceScreen';
+
+const Stack = createStackNavigator();
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<'Splash' | 'Home'>('Splash');
-
   return (
-    <View style={tw`flex-1`}>
-        <AppNavigator />;
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="QuestionnaireSlideshow">
+        <Stack.Screen
+          name="QuestionnaireSlideshow"
+          component={QuestionnaireSlideshow}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="FinancialAdviceScreen"
+          component={FinancialAdviceScreen}
+          options={{ title: 'Financial Advice' }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
