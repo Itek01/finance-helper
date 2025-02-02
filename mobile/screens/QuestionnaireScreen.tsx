@@ -51,7 +51,15 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
       ],
       stateKey: 'withdrawalTime',
     },
-    { question: 'How flexible are you?', input: 'flexibility' },
+    { question: 'What is your risk tolerance?' ,
+    options: [
+      { label: 'High risk', value: 'high_risk' },
+      { label: 'Average risk', value: 'average_risk' },
+      { label: 'Minimum risk', value: 'minimum_risk' },
+     
+    ],
+    stateKey: 'riskLevel',
+  },
   ];
 
   const nextSlide = () => {
