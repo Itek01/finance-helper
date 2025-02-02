@@ -15,7 +15,7 @@ const Home = ({ navigation }: HomeProps) => {
       </Text>
       <TouchableOpacity
         style={tw`w-full bg-blue-600 py-3 rounded-lg mb-4`}
-        onPress={() => navigation.navigate('FinancialQuestions')}
+        onPress={() => navigation.navigate('QuestionnaireSlideshow')}
       >
         <Text style={tw`text-white text-center font-bold`}>Go to Financial Questions</Text>
       </TouchableOpacity>
