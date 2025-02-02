@@ -35,10 +35,10 @@ const FinancialAdviceScreen = ({ route }: any) => {
               <Text style={tw`text-sm text-gray-700 mt-1`}>
                 <Text style={tw`font-semibold`}>Investment Amount:</Text> {stock.amount}%
               </Text>
-            <PieChartComponent data={transformedData} title="Investment Breakdown" />
             </View>
           ))}
         {/* Investment Strategies */}
+        <PieChartComponent data={transformedData} title="Investment Breakdown" />
         <Text style={tw`text-xl font-semibold text-gray-700 mt-6`}>Investment Strategies:</Text>
         {advice.investmentStrategies &&
           advice.investmentStrategies.map((strategy: any, index: number) => (
@@ -61,28 +61,9 @@ const FinancialAdviceScreen = ({ route }: any) => {
 
         {/* General Advice */}
         <Text style={tw`text-xl font-semibold text-gray-700 mt-6`}>Advice:</Text>
-        {advice.advice &&
-          advice.advice.map((advice: any, index: number) => (
             <View style={tw`bg-yellow-50 p-4 rounded-lg shadow-sm border border-yellow-200 mt-2`}>
-                <Text style={tw`text-gray-700 mt-2 ml-3`}>{advice.message}</Text>
-                <Text style={tw`text-gray-700 mt-2 ml-3`}>{"for " + advice.stock}</Text>
+                <Text style={tw`text-gray-700 mt-2 ml-3`}>{advice.advice}</Text>
             </View>
-          ))}
-        
-        {advice.expectedReturn &&
-          advice.expectedReturn.map((returning: any, index: number) => (
-            <View style={tw`bg-yellow-50 p-4 rounded-lg shadow-sm border border-yellow-200 mt-2`}>
-                {/* <InterestGraphComponent title={"Expected Rate of return"} rate={} principal={} years={} /> */}
-            </View>
-          ))}
-        {/* Risk Management Tips */}
-        <Text style={tw`text-xl font-semibold text-gray-700 mt-6`}>Risk Management Tips:</Text>
-        {advice.riskManagementTips &&
-          advice.riskManagementTips.map((tip: string, index: number) => (
-            <Text key={index} style={tw`text-gray-700 mt-2 ml-3`}>
-              • {tip}
-            </Text>
-          ))}
 
       </View>
     </ScrollView>

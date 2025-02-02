@@ -88,7 +88,7 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://192.168.11.119:5000/generate', {
+      const response = await fetch('http://localhost:5000/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
         console.log('Financial Advice:', data.advice);
   
         // Save JSON locally if needed
-        const filePath = `${FileSystem.documentDirectory}data.json`;
+        // const filePath = `${FileSystem.documentDirectory}data.json`;
         // await FileSystem.writeAsStringAsync(filePath, JSON.stringify(data.advice));
   
         // Navigate and pass the advice to the new screen
