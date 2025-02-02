@@ -6,6 +6,7 @@ import tw from 'twrnc';
 import waves2 from '../assets/waves2.jpg';
 
 import { ReactNode } from 'react';
+import FinancialAdviceScreen from './FinancialAdviceScreen';
 
 const Container = ({ children }: { children: ReactNode }) => (
   <View style={tw`flex-1 justify-center items-center w-full`}>
@@ -84,26 +85,28 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
     setAnswers({ ...answers, [key]: value });
   };
 
+
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:5000/generate', {
+      const response = await fetch('http://192.168.11.119:5000/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ answers }),
       });
-
+  
       const data = await response.json();
+  
       if (response.ok) {
         console.log('Financial Advice:', data.advice);
-
-        // Save the JSON response locall
+  
+        // Save JSON locally if needed
         const filePath = `${FileSystem.documentDirectory}data.json`;
-        await FileSystem.writeAsStringAsync(filePath, JSON.stringify(data.advice));
-
-        // Navigate to the test component
-        navigation.navigate('TestComponent');
+        // await FileSystem.writeAsStringAsync(filePath, JSON.stringify(data.advice));
+  
+        // Navigate and pass the advice to the new screen
+        navigation.navigate('FinancialAdviceScreen', { advice: data.advice });
       } else {
         console.error('Error:', data.error);
         Alert.alert('Error', 'Failed to get financial advice.');
@@ -172,5 +175,6 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
         {renderDots()}
       </Container>
     </ImageBackground>
+    
   );
 }
