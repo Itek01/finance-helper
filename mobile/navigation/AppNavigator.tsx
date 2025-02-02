@@ -5,6 +5,7 @@ import SplashScreen from '../screens/SplashScreen';
 import CoverPage from '../screens/CoverPage';
 import Home from '../screens/Home';
 import QuestionnaireSlideshow from '../screens/QuestionnaireScreen';
+import FinancialAdviceScreen from '../screens/FinancialAdviceScreen';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,11 @@ const AppNavigator = () => {
         <Stack.Screen name="CoverPage" component={CoverPage} />
         <Stack.Screen name="QuestionnaireScreen" component={QuestionnaireSlideshow} />
         <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen
+          name="FinancialAdviceScreen"
+          component={FinancialAdviceScreen}
+          options={{ title: 'Financial Advice' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
