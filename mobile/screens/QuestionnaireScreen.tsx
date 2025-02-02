@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, TextInput, Alert } from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import * as FileSystem from 'expo-file-system';
 import tw from 'twrnc';
@@ -135,46 +135,50 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
 
   return (
     <ImageBackground source={waves2} style={tw`flex-1 w-full h-full`}>
-      <Container>
-        <Text style={[tw`text-black text-3xl font-bold mb-8`, { marginTop: 60 }]}>
-          Let's get to know you...
-        </Text>
-        <Text style={tw`text-lg mb-5`}>{slideData.question}</Text>
-        {slideData.options &&
-          slideData.options.map((option, index) => (
-            <RadioButton.Item
-              key={index}
-              label={option.label}
-              value={option.value}
-              status={answers[slideData.stateKey || 'investmentGoal'] === option.value ? 'checked' : 'unchecked'}
-              onPress={() => setAnswers({ ...answers, [slideData.stateKey || 'investmentGoal']: option.value })}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={tw`flex-1`}
+      >
+        <Container>
+          <Text style={[tw`text-black text-3xl font-bold mb-8`, { marginTop: 60 }]}>
+            Let's get to know you...
+          </Text>
+          <Text style={tw`text-lg mb-10`}>{slideData.question}</Text>
+          {slideData.options &&
+            slideData.options.map((option, index) => (
+              <RadioButton.Item
+                key={index}
+                label={option.label}
+                value={option.value}
+                status={answers[slideData.stateKey || 'investmentGoal'] === option.value ? 'checked' : 'unchecked'}
+                onPress={() => setAnswers({ ...answers, [slideData.stateKey || 'investmentGoal']: option.value })}
+              />
+            ))}
+          {slideData.input && (
+            <TextInput
+              style={tw`h-10 border border-gray-400 mt-5 px-3 w-full`}
+              value={answers[slideData.input]}
+              onChangeText={(text) => handleInputChange(slideData.input, text)}
+              keyboardType="numeric"
             />
-          ))}
-        {slideData.input && (
-          <TextInput
-            style={tw`h-10 border border-gray-400 mt-5 px-3 w-full`}
-            value={answers[slideData.input]}
-            onChangeText={(text) => handleInputChange(slideData.input, text)}
-            keyboardType="numeric"
-          />
-        )}
+          )}
 
-        <View style={tw`flex-row justify-between w-full mt-5`}>
-          <TouchableOpacity onPress={handlePrevious} style={tw`mt-5 p-3 bg-cyan-900 rounded w-3/10`}>
-            <Text style={tw`text-white font-bold`}>Previous</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={tw`p-3 bg-cyan-900 rounded w-3/10 self-end`}
-            onPress={nextSlide}
-          >
-            <Text style={tw`text-white font-bold`}>
-              {currentSlide < slides.length - 1 ? 'Next' : 'Submit'}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        {renderDots()}
-      </Container>
+          <View style={tw`flex-row justify-between w-full mt-5`}>
+            <TouchableOpacity onPress={handlePrevious} style={tw`mt-5 p-3 bg-cyan-900 rounded w-3/10`}>
+              <Text style={tw`text-white font-bold`}>Previous</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={tw`p-3 bg-cyan-900 rounded w-3/10 self-end`}
+              onPress={nextSlide}
+            >
+              <Text style={tw`text-white font-bold`}>
+                {currentSlide < slides.length - 1 ? 'Next' : 'Submit'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {renderDots()}
+        </Container>
+      </KeyboardAvoidingView>
     </ImageBackground>
-    
   );
 }
