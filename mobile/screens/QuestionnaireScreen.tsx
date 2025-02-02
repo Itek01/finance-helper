@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity, Alert } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import tw from 'twrnc';
-import waves from '../assets/waves.jpg';
+import { auth, db } from '../firebaseConfig';
+import { doc, updateDoc } from 'firebase/firestore';
 import waves2 from '../assets/waves2.jpg';
 
-export default function QuestionnaireSlideshow({ navigation }: any) {
+export default function QuestionnaireSlideshow({ onComplete }: { onComplete: () => void }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [answers, setAnswers] = useState<{ [key: string]: string }>({
     investmentGoal: '',
@@ -46,13 +47,30 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
     },
   ];
 
-  const nextSlide = () => {
+  const nextSlide = async () => {
+    if (!answers[slides[currentSlide].stateKey]) {
+      Alert.alert('Error', 'Please select an answer before proceeding.');
+      return;
+    }
+
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      // Handle form submission
-      console.log(answers);
-      navigation.goBack();
+      try {
+        const user = auth.currentUser;
+        if (user) {
+          const userDocRef = doc(db, 'users', user.uid);
+          await updateDoc(userDocRef, {
+            firsttimeuser: false,
+            questionnaireAnswers: answers,
+          });
+
+          Alert.alert('Success', 'Thank you for completing the questionnaire!');
+          onComplete();
+        }
+      } catch (error: any) {
+        Alert.alert('Error', error.message);
+      }
     }
   };
 
@@ -85,20 +103,12 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
   const slideData = slides[currentSlide];
 
   return (
-    <ImageBackground
-      source={waves2}
-      style={tw`flex-1 justify-center items-center bg-cover`}
-    >
+    <ImageBackground source={waves2} style={tw`flex-1 justify-center items-center bg-cover`}>
       <Text style={[tw`text-white text-3xl font-bold mb-8`, { marginTop: 60 }]}>
         Let's get to know you...
       </Text>
 
-      <View
-        style={[
-          tw`w-4/5 p-6 rounded-xl bg-white`,
-          { minHeight: 300 },
-        ]}
-      >
+      <View style={[tw`w-4/5 p-6 rounded-xl bg-white`, { minHeight: 300 }]}>
         <Text style={tw`text-xl font-bold mb-4`}>{slideData.question}</Text>
         <RadioButton.Group
           onValueChange={(value) => handleAnswerChange(value, slideData.stateKey)}
@@ -109,14 +119,24 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
           ))}
         </RadioButton.Group>
 
-        <TouchableOpacity
-          style={tw`bg-blue-500 p-3 mt-4 rounded-lg self-end`}
-          onPress={nextSlide}
-        >
-          <Text style={tw`text-white font-bold`}>
-            {currentSlide < slides.length - 1 ? 'Next' : 'Submit'}
-          </Text>
-        </TouchableOpacity>
+        <View style={tw`flex-row justify-between mt-4`}>
+          {currentSlide > 0 && (
+            <TouchableOpacity
+              style={tw`bg-gray-500 p-3 rounded-lg`}
+              onPress={previousSlide}
+            >
+              <Text style={tw`text-white font-bold`}>Back</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={tw`bg-blue-500 p-3 rounded-lg`}
+            onPress={nextSlide}
+          >
+            <Text style={tw`text-white font-bold`}>
+              {currentSlide < slides.length - 1 ? 'Next' : 'Submit'}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {renderDots()}

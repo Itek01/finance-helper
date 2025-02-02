@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Alert } from 'react-native';
 import tw from 'twrnc';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../firebaseConfig';
 import Button from '../components/Button';
 
-export default function Signup({ onBack, onSuccess }: { onBack: () => void; onSuccess: () => void }) {
+export function Signup({ onBack, onSuccess }: { onBack: () => void; onSuccess: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -22,7 +22,7 @@ export default function Signup({ onBack, onSuccess }: { onBack: () => void; onSu
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Create a user profile in Firestore
+      // Create a user profile in Firestore with firsttimeuser set to true
       await setDoc(doc(db, 'users', user.uid), {
         firstName,
         lastName,
@@ -30,10 +30,11 @@ export default function Signup({ onBack, onSuccess }: { onBack: () => void; onSu
         createdAt: new Date().toISOString(),
         financialGoals: [],
         portfolioValue: 0,
+        firsttimeuser: true,
       });
 
       Alert.alert('Success', `Welcome ${firstName}! Your account has been created.`);
-      onSuccess(); // Redirect to Login screen
+      onSuccess();
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }

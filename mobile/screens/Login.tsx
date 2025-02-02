@@ -4,8 +4,10 @@ import tw from 'twrnc';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 import Button from '../components/Button';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
-export default function Login({ onBack, onSuccess }: { onBack: () => void; onSuccess: () => void }) {
+export function Login({ onBack, onQuestionnaire, onDashboard }: { onBack: () => void; onQuestionnaire: () => void; onDashboard: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -16,9 +18,23 @@ export default function Login({ onBack, onSuccess }: { onBack: () => void; onSuc
     }
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      Alert.alert('Success', 'Logged in successfully!');
-      onSuccess(); // Redirect to the Home screen
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Check if it's the first time logging in
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.firsttimeuser) {
+          onQuestionnaire();
+        } else {
+          onDashboard();
+        }
+      } else {
+        Alert.alert('Error', 'User data not found.');
+      }
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import tw from 'twrnc';
-import Login from './Login';
-import Signup from './Signup';
+import { Login } from './Login';
+import { Signup } from './Signup';
 
 const Home = () => {
   const [showLogin, setShowLogin] = useState(false);
@@ -64,7 +64,7 @@ const Home = () => {
       )}
 
       {/* Show Login component if showLogin is true */}
-      {showLogin && <Login onBack={handleBackToCover} onSuccess={() => handleLoginSuccess} />}
+      {showLogin && <Login onBack={handleBackToCover} onQuestionnaire={() => {}} onDashboard={() => {}} />}
 
       {/* Show Signup component if showSignup is true */}
       {showSignup && <Signup onBack={handleBackToCover} onSuccess={() => setShowSignup(false)} />}
