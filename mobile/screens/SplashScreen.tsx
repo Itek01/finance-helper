@@ -1,17 +1,21 @@
 import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
-import tw from 'twrnc';
+import { useNavigation } from '@react-navigation/native';
 
-export default function SplashScreen({ onFinish }: { onFinish: () => void }) {
+const SplashScreen = () => {
+  const navigation = useNavigation();
+
   useEffect(() => {
     setTimeout(() => {
-      onFinish();
-    }, 3000);
+      navigation.navigate("CoverPage");
+    }, 2000);
   }, []);
 
   return (
-    <View style={tw`flex-1 justify-center items-center bg-blue-500`}>
-      <Text style={tw`text-white text-2xl font-bold`}>WealthApp</Text>
+    <View>
+      <Text>Loading...</Text>
     </View>
   );
-}
+};
+
+export default SplashScreen;
