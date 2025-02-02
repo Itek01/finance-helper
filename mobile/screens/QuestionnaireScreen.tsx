@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, Text, ImageBackground, TouchableOpacity, TextInput, Alert } from 'react-native';
 import { RadioButton } from 'react-native-paper';
+import * as FileSystem from 'expo-file-system';
 import tw from 'twrnc';
-import waves from '../assets/waves.jpg';
 import waves2 from '../assets/waves2.jpg';
+
+import { ReactNode } from 'react';
+
+const Container = ({ children }: { children: ReactNode }) => (
+  <View style={tw`flex-1 justify-center items-center w-full`}>
+    <View style={tw`w-4/5 p-6 rounded-xl bg-white bg-opacity-80 items-left`}>
+      {children}
+    </View>
+  </View>
+);
 
 export default function QuestionnaireSlideshow({ navigation }: any) {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -11,20 +21,26 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
     investmentGoal: '',
     withdrawalTime: '',
     flexibility: '',
+    age: '',
+    passiveIncome: '',
+    monthlySpendings: '',
+    savings: '',
   });
 
   const slides = [
     {
-      question: 'What is your Main Investment goal?',
+      question: 'What is your main investment goal?',
       options: [
         { label: 'Buy a home', value: 'buy_home' },
         { label: 'Emergency fund', value: 'emergency_fund' },
         { label: 'Pay for education', value: 'pay_education' },
         { label: 'General saving', value: 'general_saving' },
-        { label: 'Big expense', value: 'big_expense' },
       ],
-      stateKey: 'investmentGoal',
     },
+    { question: 'How old are you?', input: 'age' },
+    { question: 'What is your monthly passive income?', input: 'passiveIncome' },
+    { question: 'What are your monthly spendings?', input: 'monthlySpendings' },
+    { question: 'How much do you have in savings?', input: 'savings' },
     {
       question: 'In how long would you like to withdraw your money?',
       options: [
@@ -35,28 +51,18 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
       ],
       stateKey: 'withdrawalTime',
     },
-    {
-      question: 'How flexible are you?',
-      options: [
-        { label: 'High level', value: 'high_level' },
-        { label: 'Medium risk level', value: 'medium_risk' },
-        { label: 'Low risk level', value: 'low_risk' },
-      ],
-      stateKey: 'flexibility',
-    },
+    { question: 'How flexible are you?', input: 'flexibility' },
   ];
 
   const nextSlide = () => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
-      // Handle form submission
-      console.log(answers);
-      navigation.goBack();
+      handleSubmit();
     }
   };
 
-  const previousSlide = () => {
+  const handlePrevious = () => {
     if (currentSlide > 0) {
       setCurrentSlide(currentSlide - 1);
     }
@@ -66,60 +72,97 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
     setAnswers({ ...answers, [stateKey]: value });
   };
 
-  const renderDots = () => {
-    return (
-      <View style={tw`flex-row justify-center mt-4`}>
-        {slides.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              tw`w-2 h-2 rounded-full mx-1`,
-              { backgroundColor: currentSlide === index ? 'blue' : 'gray' },
-            ]}
-          />
-        ))}
-      </View>
-    );
+  const handleInputChange = (key: string, value: string) => {
+    setAnswers({ ...answers, [key]: value });
   };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ answers }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Financial Advice:', data.advice);
+
+        // Save the JSON response locally
+        const filePath = `${FileSystem.documentDirectory}data.json`;
+        await FileSystem.writeAsStringAsync(filePath, JSON.stringify(data.advice));
+
+        // Navigate to the test component
+        navigation.navigate('TestComponent');
+      } else {
+        console.error('Error:', data.error);
+        Alert.alert('Error', 'Failed to get financial advice.');
+      }
+    } catch (error) {
+      console.error('Network Error:', error);
+      Alert.alert('Network Error', 'Could not connect to the server.');
+    }
+  };
+
+  const renderDots = () => (
+    <View style={tw`flex-row justify-center mt-4`}>
+      {slides.map((_, index) => (
+        <View
+          key={index}
+          style={[
+            tw`w-2 h-2 rounded-full mx-1`,
+            { backgroundColor: currentSlide === index ? 'black' : 'gray' },
+          ]}
+        />
+      ))}
+    </View>
+  );
 
   const slideData = slides[currentSlide];
 
   return (
-    <ImageBackground
-      source={waves2}
-      style={tw`flex-1 justify-center items-center bg-cover`}
-    >
-      <Text style={[tw`text-white text-3xl font-bold mb-8`, { marginTop: 60 }]}>
-        Let's get to know you...
-      </Text>
-
-      <View
-        style={[
-          tw`w-4/5 p-6 rounded-xl bg-white`,
-          { minHeight: 300 },
-        ]}
-      >
-        <Text style={tw`text-xl font-bold mb-4`}>{slideData.question}</Text>
-        <RadioButton.Group
-          onValueChange={(value) => handleAnswerChange(value, slideData.stateKey)}
-          value={answers[slideData.stateKey]}
-        >
-          {slideData.options.map((option, index) => (
-            <RadioButton.Item key={index} label={option.label} value={option.value} />
+    <ImageBackground source={waves2} style={tw`flex-1 w-full h-full`}>
+      <Container>
+        <Text style={[tw`text-black text-3xl font-bold mb-8`, { marginTop: 60 }]}>
+          Let's get to know you...
+        </Text>
+        <Text style={tw`text-lg mb-5`}>{slideData.question}</Text>
+        {slideData.options &&
+          slideData.options.map((option, index) => (
+            <RadioButton.Item
+              key={index}
+              label={option.label}
+              value={option.value}
+              status={answers[slideData.stateKey || 'investmentGoal'] === option.value ? 'checked' : 'unchecked'}
+              onPress={() => setAnswers({ ...answers, [slideData.stateKey || 'investmentGoal']: option.value })}
+            />
           ))}
-        </RadioButton.Group>
+        {slideData.input && (
+          <TextInput
+            style={tw`h-10 border border-gray-400 mt-5 px-3 w-full`}
+            value={answers[slideData.input]}
+            onChangeText={(text) => handleInputChange(slideData.input, text)}
+            keyboardType="numeric"
+          />
+        )}
 
-        <TouchableOpacity
-          style={tw`bg-blue-500 p-3 mt-4 rounded-lg self-end`}
-          onPress={nextSlide}
-        >
-          <Text style={tw`text-white font-bold`}>
-            {currentSlide < slides.length - 1 ? 'Next' : 'Submit'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {renderDots()}
+        <View style={tw`flex-row justify-between w-full mt-5`}>
+          <TouchableOpacity onPress={handlePrevious} style={tw`mt-5 p-3 bg-cyan-900 rounded w-3/10`}>
+            <Text style={tw`text-white font-bold`}>Previous</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={tw`p-3 bg-cyan-900 rounded w-3/10 self-end`}
+            onPress={nextSlide}
+          >
+            <Text style={tw`text-white font-bold`}>
+              {currentSlide < slides.length - 1 ? 'Next' : 'Submit'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {renderDots()}
+      </Container>
     </ImageBackground>
   );
 }

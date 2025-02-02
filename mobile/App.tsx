@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { View, Text } from 'react-native';
 import tw from 'twrnc';  // Import twrnc
+import AppNavigator from './navigation/AppNavigator';
 import SplashScreen from './screens/SplashScreen';
 import Home from './screens/Home';
 import PieChartComponent from './components/PieChart';
@@ -16,13 +17,13 @@ const chartData = [
 
 ];
 
-
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<'Splash' | 'Home'>('Splash');
 
   return (
     <View style={tw`flex-1 justify-center items-center bg-gray-100`}>
-      {currentScreen === 'Home' && <Home />} */}
+        return <AppNavigator />;
+
     </View>
   );
 }
