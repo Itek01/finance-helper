@@ -5,8 +5,8 @@ import SplashScreen from '../screens/SplashScreen';
 import CoverPage from '../screens/CoverPage';
 import Login from '../screens/Login';
 import Signup from '../screens/Signup';
-import FinancialQuestions from '../screens/FinancialQuestions';
 import Home from '../screens/Home';
+import QuestionnaireSlideshow from '../screens/QuestionnaireScreen';
 
 const Stack = createStackNavigator();
 
@@ -18,7 +18,7 @@ const AppNavigator = () => {
         <Stack.Screen name="CoverPage" component={CoverPage} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Signup" component={Signup} />
-        <Stack.Screen name="FinancialQuestions" component={FinancialQuestions} />
+        <Stack.Screen name="QuestionnaireScreen" component={QuestionnaireSlideshow} />
         <Stack.Screen name="Home" component={Home} />
       </Stack.Navigator>
     </NavigationContainer>
