@@ -98,7 +98,7 @@ export default function QuestionnaireSlideshow({ navigation }: any) {
       if (response.ok) {
         console.log('Financial Advice:', data.advice);
 
-        // Save the JSON response locally
+        // Save the JSON response locall
         const filePath = `${FileSystem.documentDirectory}data.json`;
         await FileSystem.writeAsStringAsync(filePath, JSON.stringify(data.advice));
 
