@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import tw from 'twrnc';
-import Navbar from '../components/Navbar.tsx';
+import Navbar from '../components/Navbar';
 
 export default function Dashboard({ setCurrentScreen }: { setCurrentScreen: (screen: string) => void }) {
   return (

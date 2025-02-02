@@ -23,6 +23,10 @@ const Home = () => {
     setShowSignup(false);
   };
 
+  const handleLoginSuccess = () => {
+      setShowLogin(false);
+    };
+
   return (
     <View style={tw`flex-1 justify-center items-center bg-white p-6`}>
       {/* Show Cover Page content only if Login and Signup are not visible */}
@@ -60,7 +64,7 @@ const Home = () => {
       )}
 
       {/* Show Login component if showLogin is true */}
-      {showLogin && <Login onBack={handleBackToCover} onSuccess={() => setShowLogin(false)} />}
+      {showLogin && <Login onBack={handleBackToCover} onSuccess={() => handleLoginSuccess} />}
 
       {/* Show Signup component if showSignup is true */}
       {showSignup && <Signup onBack={handleBackToCover} onSuccess={() => setShowSignup(false)} />}
