@@ -1,12 +1,14 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import tw from 'twrnc';
 import Login from './Login';
 import Signup from './Signup';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
-const Home = () => {
+const CoverPage = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+  const navigation = useNavigation(); // Use the useNavigation hook
 
   const handleLoginClick = () => {
     setShowLogin(true);
@@ -22,10 +24,6 @@ const Home = () => {
     setShowLogin(false);
     setShowSignup(false);
   };
-
-  const handleLoginSuccess = () => {
-      setShowLogin(false);
-    };
 
   return (
     <View style={tw`flex-1 justify-center items-center bg-white p-6`}>
@@ -44,7 +42,7 @@ const Home = () => {
             Simple, Smart, and Shark-Approved
           </Text>
           <TouchableOpacity
-            onPress={() => alert('Get Started clicked!')}
+            onPress={() => navigation.navigate('FinancialQuestions')} // Use navigation.navigate
             style={tw`w-full bg-blue-600 py-3 rounded-lg mb-4`}
           >
             <Text style={tw`text-white text-center font-bold`}>Get Started</Text>
@@ -64,13 +62,22 @@ const Home = () => {
       )}
 
       {/* Show Login component if showLogin is true */}
-      {showLogin && <Login onBack={handleBackToCover} onQuestionnaire={() => {}} onDashboard={() => {}} />}
+      {showLogin && (
+        <Login
+          onBack={handleBackToCover}
+          onSuccess={() => navigation.navigate('Home')} // Use navigation.navigate
+        />
+      )}
 
       {/* Show Signup component if showSignup is true */}
-      {showSignup && <Signup onBack={handleBackToCover} onSuccess={() => setShowSignup(false)} />}
->>>>>>> master
+      {showSignup && (
+        <Signup
+          onBack={handleBackToCover}
+          onSuccess={() => navigation.navigate('FinancialQuestions')} // Use navigation.navigate
+        />
+      )}
     </View>
   );
 };
 
-export default Home;
+export default CoverPage;

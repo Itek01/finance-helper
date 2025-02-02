@@ -1,57 +1,35 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import tw from 'twrnc';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 import Button from '../components/Button';
-import { doc, getDoc, updateDoc } from 'firebase/firestore'; // Correctly import updateDoc
-import { db } from '../firebaseConfig';
 
-export function Login({ onBack, onQuestionnaire, onDashboard }: { onBack: () => void; onQuestionnaire: () => void; onDashboard: () => void }) {
+export default function Login({ onBack, onSuccess }: { onBack: () => void; onSuccess: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // Add a loading state
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert('Error', 'Please fill in all fields.');
       return;
     }
-  
+
     try {
-      // Sign in with Firebase Authentication
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-  
-      // Fetch the user's Firestore document
-      const userDocRef = doc(db, 'users', user.uid);
-      const userDoc = await getDoc(userDocRef);
-  
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        
-        // Check if the user is logging in for the first time
-        if (userData.firsttimeuser) {
-          await updateDoc(userDocRef, { lastLogin: new Date().toISOString() }); // Track last login
-          onQuestionnaire(); // Redirect to the questionnaire
-        } else {
-          await updateDoc(userDocRef, { lastLogin: new Date().toISOString() }); // Track last login
-          onDashboard(); // Redirect to the dashboard
-        }
-      } else {
-        Alert.alert('Error', 'User data not found in Firestore.');
-      }
+      await signInWithEmailAndPassword(auth, email, password);
+      Alert.alert('Success', 'Logged in successfully!');
+      onSuccess(); // Redirect to the Home screen
     } catch (error: any) {
-      // Handle errors properly
-      console.error('Login Error:', error.message);
       Alert.alert('Error', error.message);
     }
   };
 
   return (
-    <View style={tw`flex-1 justify-center items-center bg-gray-100 p-4`}>
-      <Text style={tw`text-2xl font-bold mb-6 text-blue-600`}>Welcome Back</Text>
+    <View style={tw`flex-1 justify-center items-center bg-white p-6`}>
+      <Text style={tw`text-2xl font-bold text-blue-600 mb-8`}>Login</Text>
       <TextInput
-        style={tw`border border-gray-300 p-3 w-full mb-4 rounded-lg`}
+        style={tw`w-full border border-gray-300 rounded-lg p-3 mb-4`}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
@@ -59,16 +37,25 @@ export function Login({ onBack, onQuestionnaire, onDashboard }: { onBack: () => 
         autoCapitalize="none"
       />
       <TextInput
-        style={tw`border border-gray-300 p-3 w-full mb-6 rounded-lg`}
+        style={tw`w-full border border-gray-300 rounded-lg p-3 mb-4`}
         placeholder="Password"
-        secureTextEntry
         value={password}
         onChangeText={setPassword}
+        secureTextEntry
+        autoCapitalize="none"
       />
-      <Button title="Login" onPress={handleLogin} />
-      <View style={tw`mt-4`}>
-        <Button title="Back" onPress={onBack} variant="secondary" />
-      </View>
+      <TouchableOpacity
+        style={tw`w-full bg-blue-600 py-3 rounded-lg mb-4`}
+        onPress={handleLogin}
+        disabled={loading} // Disable the button when loading
+      >
+        <Text style={tw`text-white text-center font-bold`}>
+          {loading ? 'Logging in...' : 'Login'}
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onBack}>
+        <Text style={tw`text-gray-600`}>Back to Cover Page</Text>
+      </TouchableOpacity>
     </View>
   );
 }
