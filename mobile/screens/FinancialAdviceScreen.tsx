@@ -62,7 +62,7 @@ const FinancialAdviceScreen = ({ route }: any) => {
         {/* General Advice */}
         <Text style={tw`text-xl font-semibold text-gray-700 mt-6`}>Advice:</Text>
             <View style={tw`bg-yellow-50 p-4 rounded-lg shadow-sm border border-yellow-200 mt-2`}>
-                <Text style={tw`text-gray-700 mt-2 ml-3`}>{advice.advice}</Text>
+                <Text style={tw`text-gray-700 mt-2 ml-3`}>{advice.advice ? advice.advice : ""}</Text>
             </View>
 
       </View>
